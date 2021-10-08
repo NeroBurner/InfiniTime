@@ -17,7 +17,7 @@ namespace Pinetime {
         SettingDisplay(DisplayApp* app, Pinetime::Controllers::Settings& settingsController);
         ~SettingDisplay() override;
 
-        void UpdateSelected(lv_obj_t* object, lv_event_t event);
+        void UpdateSelected(lv_obj_t* object, lv_event_t* event);
 
       private:
         static constexpr std::array<uint16_t, 4> options = {5000, 15000, 20000, 30000};

@@ -74,7 +74,7 @@ bool SystemInfo::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
 }
 
 std::unique_ptr<Screen> SystemInfo::CreateScreen1() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   lv_label_set_text_fmt(label,
                         "#FFFF00 InfiniTime#\n\n"
@@ -91,8 +91,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen1() {
                         __DATE__,
                         __TIME__,
                         BootloaderVersion::VersionString());
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_center(label);
   return std::make_unique<Screens::Label>(0, 5, app, label);
 }
 
@@ -136,7 +135,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen2() {
   uptimeSeconds = uptimeSeconds % secondsInAMinute;
   // TODO handle more than 100 days of uptime
 
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   lv_label_set_text_fmt(label,
                         "#444444 Date# %02d/%02d/%04d\n"
@@ -165,7 +164,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen2() {
                         touchPanel.GetChipId(),
                         touchPanel.GetVendorId(),
                         touchPanel.GetFwVersion());
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::make_unique<Screens::Label>(1, 5, app, label);
 }
 
@@ -173,7 +172,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen3() {
   lv_mem_monitor_t mon;
   lv_mem_monitor(&mon);
 
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   auto& bleAddr = bleController.Address();
   lv_label_set_text_fmt(label,
@@ -196,7 +195,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen3() {
                         mon.max_used,
                         mon.frag_pct,
                         static_cast<int>(mon.free_biggest_size));
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::make_unique<Screens::Label>(2, 5, app, label);
 }
 
@@ -208,11 +207,11 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen4() {
   static constexpr uint8_t maxTaskCount = 9;
   TaskStatus_t tasksStatus[maxTaskCount];
 
-  lv_obj_t* infoTask = lv_table_create(lv_scr_act(), nullptr);
+  lv_obj_t* infoTask = lv_table_create(lv_scr_act());
   lv_table_set_col_cnt(infoTask, 4);
   lv_table_set_row_cnt(infoTask, maxTaskCount + 1);
-  lv_obj_set_style_local_pad_all(infoTask, LV_TABLE_PART_CELL1, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_border_color(infoTask, LV_TABLE_PART_CELL1, LV_STATE_DEFAULT, LV_COLOR_GRAY);
+  lv_obj_set_style_pad_all(infoTask, 0, LV_PART_ITEMS);
+  lv_obj_set_style_border_color(infoTask, lv_palette_main(LV_PALETTE_GREY), LV_PART_ITEMS | LV_STATE_DEFAULT);
 
   lv_table_set_cell_value(infoTask, 0, 0, "#");
   lv_table_set_col_width(infoTask, 0, 30);
@@ -262,7 +261,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen4() {
 }
 
 std::unique_ptr<Screen> SystemInfo::CreateScreen5() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   lv_label_set_text_static(label,
                            "Software Licensed\n"
@@ -273,7 +272,7 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen5() {
                            "#FFFF00 https://github.com/#\n"
                            "#FFFF00 InfiniTimeOrg/#\n"
                            "#FFFF00 InfiniTime#");
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_center(label);
   return std::make_unique<Screens::Label>(4, 5, app, label);
 }

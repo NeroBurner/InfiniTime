@@ -17,7 +17,7 @@ namespace Pinetime {
         SettingTimeFormat(DisplayApp* app, Pinetime::Controllers::Settings& settingsController);
         ~SettingTimeFormat() override;
 
-        void UpdateSelected(lv_obj_t* object, lv_event_t event);
+        void UpdateSelected(lv_obj_t* object, lv_event_t* event);
 
       private:
         static constexpr std::array<const char*, 2> options = {" 12-hour", " 24-hour"};

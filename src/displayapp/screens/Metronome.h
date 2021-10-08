@@ -13,7 +13,7 @@ namespace Pinetime {
         Metronome(DisplayApp* app, Controllers::MotorController& motorController, System::SystemTask& systemTask);
         ~Metronome() override;
         void Refresh() override;
-        void OnEvent(lv_obj_t* obj, lv_event_t event);
+        void OnEvent(lv_obj_t* obj, lv_event_t* event);
         bool OnTouchEvent(TouchEvents event) override;
 
       private:
@@ -30,9 +30,9 @@ namespace Pinetime {
 
         lv_obj_t *bpmArc, *bpmTap, *bpmValue;
         lv_obj_t *bpbDropdown, *currentBpbText;
-        lv_obj_t *playPause;
+        lv_obj_t *playPause, *txtPlayPause;
 
-        lv_task_t* taskRefresh;
+        lv_timer_t* taskRefresh;
       };
     }
   }

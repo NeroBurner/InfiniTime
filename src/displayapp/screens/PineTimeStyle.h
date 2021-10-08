@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lvgl/src/lv_core/lv_obj.h>
+#include <lvgl/src/core/lv_obj.h>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -85,7 +85,10 @@ namespace Pinetime {
         lv_obj_t* calendarCrossBar1;
         lv_obj_t* calendarCrossBar2;
         lv_obj_t* notificationIcon;
-        lv_obj_t* stepGauge;
+        lv_obj_t* stepCont;
+        lv_obj_t* stepMeter;
+        lv_meter_scale_t* stepScale;
+        lv_meter_indicator_t* stepIndicator;
         lv_obj_t* btnSet;
         lv_obj_t* lbl_btnSet;
         lv_color_t needle_colors[1];
@@ -101,7 +104,7 @@ namespace Pinetime {
         void CloseMenu();
         void AlignIcons();
 
-        lv_task_t* taskRefresh;
+        lv_timer_t* taskRefresh;
       };
     }
   }

@@ -17,7 +17,7 @@ namespace Pinetime {
         SettingWatchFace(DisplayApp* app, Pinetime::Controllers::Settings& settingsController);
         ~SettingWatchFace() override;
 
-        void UpdateSelected(lv_obj_t* object, lv_event_t event);
+        void UpdateSelected(lv_obj_t* object, lv_event_t* event);
 
       private:
         static constexpr std::array<const char*, 3> options = {" Digital face", " Analog face", " PineTimeStyle"};
