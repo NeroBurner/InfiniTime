@@ -1,8 +1,8 @@
 #pragma once
 
-#include <lvgl/src/lv_core/lv_style.h>
-#include <lvgl/src/lv_themes/lv_theme.h>
-#include <lvgl/src/lv_hal/lv_hal.h>
+#include <lvgl/src/misc/lv_style.h>
+#include <lvgl/src/core/lv_theme.h>
+#include <lvgl/src/hal/lv_hal.h>
 #include <drivers/St7789.h>
 #include <drivers/Cst816s.h>
 

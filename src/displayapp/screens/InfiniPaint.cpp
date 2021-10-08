@@ -21,28 +21,28 @@ bool InfiniPaint::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       color = (color + 1) % 8;
       switch (color) {
         case 0:
-          selectColor = LV_COLOR_MAGENTA;
+          selectColor = lv_color_hex(0xFF00FF);
           break;
         case 1:
-          selectColor = LV_COLOR_GREEN;
+          selectColor = lv_palette_main(LV_PALETTE_GREEN);
           break;
         case 2:
-          selectColor = LV_COLOR_WHITE;
+          selectColor = lv_color_white();
           break;
         case 3:
-          selectColor = LV_COLOR_RED;
+          selectColor = lv_palette_main(LV_PALETTE_RED);
           break;
         case 4:
-          selectColor = LV_COLOR_CYAN;
+          selectColor = lv_palette_main(LV_PALETTE_CYAN);
           break;
         case 5:
-          selectColor = LV_COLOR_YELLOW;
+          selectColor = lv_palette_main(LV_PALETTE_YELLOW);
           break;
         case 6:
-          selectColor = LV_COLOR_BLUE;
+          selectColor = lv_palette_main(LV_PALETTE_BLUE);
           break;
         case 7:
-          selectColor = LV_COLOR_BLACK;
+          selectColor = lv_color_black();
           break;
 
         default:
