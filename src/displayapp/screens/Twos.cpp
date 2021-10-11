@@ -10,60 +10,72 @@ using namespace Pinetime::Applications::Screens;
 
 
 namespace {
-  
-  static lv_color_t TWOS_COLOR_0   = lv_color_hex(0xcdc0b4);
-  static lv_color_t TWOS_COLOR_2   = lv_color_hex(0xefdfc6);
-  static lv_color_t TWOS_COLOR_8   = lv_color_hex(0xef9263);
-  static lv_color_t TWOS_COLOR_32  = lv_color_hex(0xf76142);
-  static lv_color_t TWOS_COLOR_128 = lv_color_hex(0x007dc5);
-  
+  const lv_color_t TWOS_COLOR_0 = lv_color_hex(0xcdc0b4);
+  const lv_color_t TWOS_COLOR_2_4 = lv_color_hex(0xefdfc6);
+  const lv_color_t TWOS_COLOR_8_16 = lv_color_hex(0xef9263);
+  const lv_color_t TWOS_COLOR_32_64 = lv_color_hex(0xf76142);
+  const lv_color_t TWOS_COLOR_128_PLUS = lv_color_hex(0x007dc5);
+  const lv_color_t TWOS_BORDER_DEFAULT = lv_color_hex(0xbbada0);
+  const lv_color_t TWOS_BORDER_NEW = lv_color_darken(lv_color_hex(0xbbada0), LV_OPA_50);
+
   static void draw_part_event_cb(lv_event_t* event){
-  
+    lv_obj_t * obj = lv_event_get_target(event);
+    std::array<std::array<Pinetime::Applications::TwosTile,4>,4> &grid = *static_cast<std::array<std::array<Pinetime::Applications::TwosTile,4>,4>*>(event->user_data);
     lv_obj_draw_part_dsc_t *dsc = static_cast<lv_obj_draw_part_dsc_t*>(lv_event_get_param(event));
     if(dsc->part == LV_PART_ITEMS) {
-      switch (dsc->value) {
+      uint32_t row = dsc->id /  lv_table_get_col_cnt(obj);
+      uint32_t col = dsc->id - row * lv_table_get_col_cnt(obj);
+      switch (grid[row][col].value) {
         case 0:
           dsc->rect_dsc->bg_color = TWOS_COLOR_0;
           break;
         case 2:
         case 4:
-          dsc->rect_dsc->bg_color = TWOS_COLOR_2;
+          dsc->rect_dsc->bg_color = TWOS_COLOR_2_4;
+          dsc->label_dsc->color = lv_color_black();
           break;
         case 8:
         case 16:
-          dsc->rect_dsc->bg_color = TWOS_COLOR_8;
+          dsc->rect_dsc->bg_color = TWOS_COLOR_8_16;
+          dsc->label_dsc->color = lv_color_white();
           break;
         case 32:
         case 64:
-          dsc->rect_dsc->bg_color = TWOS_COLOR_32;
+          dsc->rect_dsc->bg_color = TWOS_COLOR_32_64;
+          dsc->label_dsc->color = lv_color_white();
           break;
         default:
-          dsc->rect_dsc->bg_color = TWOS_COLOR_128;
+          dsc->rect_dsc->bg_color = TWOS_COLOR_128_PLUS;
+          dsc->label_dsc->color = lv_color_white();
           break;
-        
       }
     }
+  }
+  static void lv_event_gesture_cb(lv_event_t *event) {
+    Twos* twos = static_cast<Twos*>(event->user_data);
+    lv_dir_t dir = lv_indev_get_gesture_dir(lv_indev_get_act());
+    if (dir == LV_DIR_LEFT)
+      twos->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeLeft);
+    else if (dir == LV_DIR_RIGHT)
+      twos->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeRight);
+    else if (dir == LV_DIR_TOP)
+      twos->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeUp);
+    else if (dir == LV_DIR_BOTTOM)
+      twos->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeDown);
   }
 }
 
 Twos::Twos(Pinetime::Applications::DisplayApp* app) : Screen(app) {
 
-  // create styles to apply to different valued tiles
+  // create default style to apply to tiles
   lv_style_init(&style_cell_default);
-  lv_style_init(&style_cell1);
-  lv_style_init(&style_cell2);
-  lv_style_init(&style_cell3);
-  lv_style_init(&style_cell4);
-  lv_style_init(&style_cell5);
-
-  lv_style_set_border_color(&style_cell_default, lv_color_hex(0xbbada0));
+  lv_style_set_border_color(&style_cell_default, TWOS_BORDER_DEFAULT);
   lv_style_set_border_width(&style_cell_default, 3);
   lv_style_set_bg_opa(&style_cell_default, LV_OPA_COVER);
+  lv_style_set_bg_color(&style_cell_default, TWOS_COLOR_0);
   lv_style_set_pad_top(&style_cell_default, 25);
   lv_style_set_text_color(&style_cell_default, lv_color_black());
-
-
-  // format grid display
+  lv_style_set_text_align(&style_cell_default, LV_TEXT_ALIGN_CENTER);
 
   gridDisplay = lv_table_create(lv_scr_act());
   lv_obj_add_style(gridDisplay, &style_cell_default, LV_PART_ITEMS | LV_STATE_DEFAULT);
@@ -74,6 +86,7 @@ Twos::Twos(Pinetime::Applications::DisplayApp* app) : Screen(app) {
   lv_table_set_col_width(gridDisplay, 2, LV_HOR_RES / 4);
   lv_table_set_col_width(gridDisplay, 3, LV_HOR_RES / 4);
   lv_obj_align(gridDisplay, LV_ALIGN_BOTTOM_MID, 0, 0);
+  lv_obj_clear_flag(gridDisplay, LV_OBJ_FLAG_CLICKABLE);
 
   // initialize grid
   for (int row = 0; row < 4; row++) {
@@ -97,17 +110,17 @@ Twos::Twos(Pinetime::Applications::DisplayApp* app) : Screen(app) {
   lv_obj_set_size(backgroundLabel, 240, 240);
   lv_obj_set_pos(backgroundLabel, 0, 0);
   lv_label_set_text(backgroundLabel, "");
-  
+
   // Need a draw callback to color the cells
-  lv_obj_add_event_cb(gridDisplay, draw_part_event_cb, LV_EVENT_DRAW_PART_BEGIN, gridDisplay->user_data);
+  lv_obj_add_event_cb(gridDisplay, draw_part_event_cb, LV_EVENT_DRAW_PART_BEGIN, grid.data());
+  // Handle LVGL swipe events
+  lv_obj_add_event_cb(lv_scr_act(), lv_event_gesture_cb, LV_EVENT_GESTURE, this);
 }
 
 Twos::~Twos() {
-  lv_style_reset(&style_cell1);
-  lv_style_reset(&style_cell2);
-  lv_style_reset(&style_cell3);
-  lv_style_reset(&style_cell4);
-  lv_style_reset(&style_cell5);
+  lv_style_reset(&style_cell_default);
+  lv_obj_remove_event_cb(lv_scr_act(), lv_event_gesture_cb);
+  lv_obj_remove_event_cb(gridDisplay, draw_part_event_cb);
   lv_obj_clean(lv_scr_act());
 }
 
@@ -115,6 +128,10 @@ bool Twos::placeNewTile() {
   std::vector<std::pair<int, int>> availableCells;
   for (int row = 0; row < 4; row++) {
     for (int col = 0; col < 4; col++) {
+      if(grid[row][col].isNew) {
+        grid[row][col].isNew = false;
+        grid[row][col].changed = true;
+      }
       if (!grid[row][col].value) {
         availableCells.push_back(std::make_pair(row, col));
       }
@@ -129,17 +146,21 @@ bool Twos::placeNewTile() {
   int random = rand() % availableCells.size();
   std::advance(it, random);
   std::pair<int, int> newCell = *it;
+  TwosTile *curTile = &grid[newCell.first][newCell.second];
 
-  if ((rand() % 100) < 90)
-    grid[newCell.first][newCell.second].value = 2;
-  else
-    grid[newCell.first][newCell.second].value = 4;
+  if ((rand() % 100) < 90) {
+    curTile->value = 2;
+  } else {
+    curTile->value = 4;
+  }
+  curTile->changed = true;
+  curTile->isNew = true;
   updateGridDisplay(grid);
   return true;
 }
 
-bool Twos::tryMerge(TwosTile grid[][4], int& newRow, int& newCol, int oldRow, int oldCol) {
-  if ((grid[newRow][newCol].value == grid[oldRow][oldCol].value)) {
+bool Twos::tryMerge(std::array<std::array<TwosTile,4>,4> &grid, int& newRow, int& newCol, int oldRow, int oldCol) {
+  if (grid[newRow][newCol].value == grid[oldRow][oldCol].value) {
     if ((newCol != oldCol) || (newRow != oldRow)) {
       if (!grid[newRow][newCol].merged) {
         unsigned int newVal = grid[oldRow][oldCol].value *= 2;
@@ -155,7 +176,7 @@ bool Twos::tryMerge(TwosTile grid[][4], int& newRow, int& newCol, int oldRow, in
   return false;
 }
 
-bool Twos::tryMove(TwosTile grid[][4], int newRow, int newCol, int oldRow, int oldCol) {
+bool Twos::tryMove(std::array<std::array<TwosTile,4>,4> &grid, int newRow, int newCol, int oldRow, int oldCol) {
   if (((newCol >= 0) && (newCol != oldCol)) || ((newRow >= 0) && (newRow != oldRow))) {
     grid[newRow][newCol].value = grid[oldRow][oldCol].value;
     grid[oldRow][oldCol].value = 0;
@@ -194,7 +215,7 @@ bool Twos::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       if (validMove) {
         placeNewTile();
       }
-      return true;
+      break;
     case TouchEvents::SwipeRight:
       for (int col = 2; col >= 0; col--) { // ignore tiles already on far right
         for (int row = 0; row < 4; row++) {
@@ -217,7 +238,7 @@ bool Twos::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       if (validMove) {
         placeNewTile();
       }
-      return true;
+      break;
     case TouchEvents::SwipeUp:
       for (int row = 1; row < 4; row++) { // ignore tiles already on top
         for (int col = 0; col < 4; col++) {
@@ -240,7 +261,7 @@ bool Twos::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       if (validMove) {
         placeNewTile();
       }
-      return true;
+      break;
     case TouchEvents::SwipeDown:
       for (int row = 2; row >= 0; row--) { // ignore tiles already on bottom
         for (int col = 0; col < 4; col++) {
@@ -263,20 +284,19 @@ bool Twos::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       if (validMove) {
         placeNewTile();
       }
-      return true;
+      break;
     default:
-      return false;
+      validMove = false;
+      break;
   }
-  return false;
+  return validMove;
 }
 
-void Twos::updateGridDisplay(TwosTile grid[][4]) {
+void Twos::updateGridDisplay(std::array<std::array<TwosTile,4>,4> &grid) {
   for (int row = 0; row < 4; row++) {
     for (int col = 0; col < 4; col++) {
       if (grid[row][col].value) {
-        char buffer[7];
-        sprintf(buffer, "%d", grid[row][col].value);
-        lv_table_set_cell_value(gridDisplay, row, col, buffer);
+        lv_table_set_cell_value_fmt(gridDisplay, row, col, "%u", grid[row][col].value);
       } else {
         lv_table_set_cell_value(gridDisplay, row, col, "");
       }

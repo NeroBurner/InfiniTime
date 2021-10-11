@@ -3,10 +3,14 @@
 #include <lvgl/src/core/lv_obj.h>
 #include "displayapp/screens/Screen.h"
 
+#include <array>
+
 namespace Pinetime {
   namespace Applications {
     struct TwosTile {
       bool merged = false;
+      bool changed = true;
+      bool isNew = false;
       unsigned int value = 0;
     };
     namespace Screens {
@@ -19,19 +23,14 @@ namespace Pinetime {
 
       private:
         lv_style_t style_cell_default;
-        lv_style_t style_cell1;
-        lv_style_t style_cell2;
-        lv_style_t style_cell3;
-        lv_style_t style_cell4;
-        lv_style_t style_cell5;
 
         lv_obj_t* scoreText;
         lv_obj_t* gridDisplay;
-        TwosTile grid[4][4];
+        std::array<std::array<TwosTile, 4>,4> grid;
         unsigned int score = 0;
-        void updateGridDisplay(TwosTile grid[][4]);
-        bool tryMerge(TwosTile grid[][4], int& newRow, int& newCol, int oldRow, int oldCol);
-        bool tryMove(TwosTile grid[][4], int newRow, int newCol, int oldRow, int oldCol);
+        void updateGridDisplay(std::array<std::array<TwosTile,4>,4> &grid);
+        bool tryMerge(std::array<std::array<TwosTile,4>,4> &grid, int& newRow, int& newCol, int oldRow, int oldCol);
+        bool tryMove(std::array<std::array<TwosTile,4>,4> &grid, int newRow, int newCol, int oldRow, int oldCol);
         bool placeNewTile();
       };
     }
