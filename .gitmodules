@@ -8,3 +8,6 @@
 [submodule "src/libs/QCBOR"]
 	path = src/libs/QCBOR
 	url = https://github.com/laurencelundblade/QCBOR.git
+[submodule "lv_sim/lv_drivers"]
+	path = lv_sim/lv_drivers
+	url = https://github.com/lvgl/lv_drivers.git
