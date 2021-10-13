@@ -28,6 +28,9 @@ namespace Pinetime {
         Controllers::HeartRateController& heartRateController;
         Pinetime::System::SystemTask& systemTask;
         void UpdateStartStopButton(bool isRunning);
+        Controllers::HeartRateController::States prevState = Controllers::HeartRateController::States::Stopped;
+        uint8_t prevHeartRate = 0;
+        
         lv_obj_t* label_hr;
         lv_obj_t* label_bpm;
         lv_obj_t* label_status;
