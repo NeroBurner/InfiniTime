@@ -29,7 +29,8 @@ namespace Pinetime {
         static constexpr uint16_t width = 10;
         static constexpr uint16_t height = 10;
         static constexpr uint16_t bufferSize = width * height;
-        lv_color_t b[bufferSize];
+        lv_obj_t *canvas;
+        lv_color_t buf[LV_CANVAS_BUF_SIZE_TRUE_COLOR(LV_HOR_RES_MAX, LV_VER_RES_MAX)];
         lv_color_t selectColor = lv_color_white();
         uint8_t color = 2;
       };
