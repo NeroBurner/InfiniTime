@@ -63,20 +63,20 @@ FlashLight::~FlashLight() {
 
 void FlashLight::SetColors() {
   if (isOn) {
-    lv_obj_set_style_bg_color(lv_scr_act(), LV_COLOR_WHITE, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_color(flashLight, LV_COLOR_GRAY, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(flashLight, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN | LV_STATE_DEFAULT);
     for (auto & i : indicators) {
-      lv_obj_set_style_bg_color(i, LV_COLOR_GRAY, LV_PART_MAIN | LV_STATE_DEFAULT);
-      lv_obj_set_style_bg_color(i, LV_COLOR_WHITE, LV_PART_MAIN | LV_STATE_DISABLED);
-      lv_obj_set_style_border_color(i, LV_COLOR_GRAY, LV_OBJ_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color(i, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color(i, lv_color_white(), LV_PART_MAIN | LV_STATE_DISABLED);
+      lv_obj_set_style_border_color(i, lv_palette_main(LV_PALETTE_GREY), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
   } else {
-    lv_obj_set_style_bg_color(lv_scr_act(), LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_color(flashLight, LV_COLOR_WHITE, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(flashLight, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
     for (auto & i : indicators) {
-      lv_obj_set_style_bg_color(i, LV_COLOR_WHITE, LV_PART_MAIN | LV_STATE_DEFAULT);
-      lv_obj_set_style_bg_color(i, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DISABLED);
-      lv_obj_set_style_border_color(i, LV_COLOR_WHITE, LV_OBJ_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color(i, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_bg_color(i, lv_color_black(), LV_PART_MAIN | LV_STATE_DISABLED);
+      lv_obj_set_style_border_color(i, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
   }
 }

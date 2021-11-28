@@ -175,8 +175,8 @@ std::unique_ptr<Screen> SystemInfo::CreateScreen4() {
   lv_obj_t* infoTask = lv_table_create(lv_scr_act());
   lv_table_set_col_cnt(infoTask, 4);
   lv_table_set_row_cnt(infoTask, maxTaskCount + 1);
-  lv_obj_set_style_local_pad_all(infoTask, LV_TABLE_PART_CELL1, LV_STATE_DEFAULT, 0);
-  lv_obj_set_style_local_border_color(infoTask, LV_TABLE_PART_CELL1, LV_STATE_DEFAULT, LV_COLOR_GRAY);
+  lv_obj_set_style_pad_all(infoTask, 0, LV_PART_ITEMS);
+  lv_obj_set_style_border_color(infoTask, lv_palette_main(LV_PALETTE_GREY), LV_PART_ITEMS | LV_STATE_DEFAULT);
 
   lv_table_set_cell_value(infoTask, 0, 0, "#");
   lv_table_set_col_width(infoTask, 0, 30);
