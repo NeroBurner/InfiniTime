@@ -32,7 +32,7 @@ FlashLight::FlashLight(Pinetime::Applications::DisplayApp* app,
   for (auto & i : indicators) {
     i = lv_obj_create(lv_scr_act());
     lv_obj_set_size(i, 15, 10);
-    lv_obj_set_style_local_border_width(i, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 2);
+    lv_obj_set_style_border_width(i, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
 
   lv_obj_align(indicators[1], flashLight, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
