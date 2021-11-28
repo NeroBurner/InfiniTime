@@ -35,9 +35,9 @@ FlashLight::FlashLight(Pinetime::Applications::DisplayApp* app,
     lv_obj_set_style_border_width(i, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
   }
 
-  lv_obj_align(indicators[1], flashLight, LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
-  lv_obj_align(indicators[0], indicators[1], LV_ALIGN_OUT_LEFT_MID, -8, 0);
-  lv_obj_align(indicators[2], indicators[1], LV_ALIGN_OUT_RIGHT_MID, 8, 0);
+  lv_obj_align(indicators[1], LV_ALIGN_OUT_BOTTOM_MID, 0, 5);
+  lv_obj_align(indicators[0], LV_ALIGN_OUT_LEFT_MID, -8, 0);
+  lv_obj_align(indicators[2], LV_ALIGN_OUT_RIGHT_MID, 8, 0);
 
   SetIndicators();
   SetColors();
@@ -85,19 +85,19 @@ void FlashLight::SetIndicators() {
   using namespace Pinetime::Controllers;
 
   if (brightnessLevel == BrightnessController::Levels::High) {
-    lv_obj_set_state(indicators[1], LV_STATE_DEFAULT);
-    lv_obj_set_state(indicators[2], LV_STATE_DEFAULT);
+    lv_obj_add_state(indicators[1], LV_STATE_DEFAULT);
+    lv_obj_add_state(indicators[2], LV_STATE_DEFAULT);
   } else if (brightnessLevel == BrightnessController::Levels::Medium) {
-    lv_obj_set_state(indicators[1], LV_STATE_DEFAULT);
-    lv_obj_set_state(indicators[2], LV_STATE_DISABLED);
+    lv_obj_add_state(indicators[1], LV_STATE_DEFAULT);
+    lv_obj_add_state(indicators[2], LV_STATE_DISABLED);
   } else {
-    lv_obj_set_state(indicators[1], LV_STATE_DISABLED);
-    lv_obj_set_state(indicators[2], LV_STATE_DISABLED);
+    lv_obj_add_state(indicators[1], LV_STATE_DISABLED);
+    lv_obj_add_state(indicators[2], LV_STATE_DISABLED);
   }
 }
 
 void FlashLight::OnClickEvent(lv_obj_t* obj, lv_event_t *event) {
-  if (obj == backgroundAction && event == LV_EVENT_CLICKED) {
+  if (obj == backgroundAction && lv_event_get_code(event) == LV_EVENT_CLICKED) {
     isOn = !isOn;
     SetColors();
   }
