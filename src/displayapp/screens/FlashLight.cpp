@@ -9,6 +9,18 @@ namespace {
     FlashLight* screen = static_cast<FlashLight*>(lv_event_get_user_data(event));
     screen->OnClickEvent(lv_event_get_target(event), event);
   }
+  static void lv_event_gesture_cb(lv_event_t *event) {
+    FlashLight* fl = static_cast<FlashLight*>(event->user_data);
+    lv_dir_t dir = lv_indev_get_gesture_dir(lv_indev_get_act());
+    if (dir == LV_DIR_LEFT)
+      fl->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeLeft);
+    else if (dir == LV_DIR_RIGHT)
+      fl->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeRight);
+    else if (dir == LV_DIR_TOP)
+      fl->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeUp);
+    else if (dir == LV_DIR_BOTTOM)
+      fl->OnTouchEvent(Pinetime::Applications::TouchEvents::SwipeDown);
+  }
 }
 
 FlashLight::FlashLight(Pinetime::Applications::DisplayApp* app,
@@ -50,11 +62,14 @@ FlashLight::FlashLight(Pinetime::Applications::DisplayApp* app,
   lv_obj_add_flag(backgroundAction, LV_OBJ_FLAG_CLICKABLE);
   backgroundAction->user_data = this;
   lv_obj_add_event_cb(backgroundAction, event_handler, LV_EVENT_ALL, backgroundAction->user_data);
+  // Handle LVGL swipe events
+  lv_obj_add_event_cb(lv_scr_act(), lv_event_gesture_cb, LV_EVENT_GESTURE, this);
 
   systemTask.PushMessage(Pinetime::System::Messages::DisableSleeping);
 }
 
 FlashLight::~FlashLight() {
+  lv_obj_remove_event_cb(lv_scr_act(), lv_event_gesture_cb);
   lv_obj_clean(lv_scr_act());
   lv_obj_set_style_bg_color(lv_scr_act(), lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
   brightnessController.Restore();
