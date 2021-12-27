@@ -69,7 +69,7 @@ bool Weather::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
 }
 
 std::unique_ptr<Screen> Weather::CreateScreenTemperature() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   std::unique_ptr<Controllers::WeatherData::Temperature>& current = weatherService.GetCurrentTemperature();
   if (current->timestamp == 0) {
@@ -96,13 +96,13 @@ std::unique_ptr<Screen> Weather::CreateScreenTemperature() {
                           current->timestamp,
                           current->expires);
   }
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::unique_ptr<Screen>(new Screens::Label(0, 5, app, label));
 }
 
 std::unique_ptr<Screen> Weather::CreateScreenAir() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   std::unique_ptr<Controllers::WeatherData::AirQuality>& current = weatherService.GetCurrentQuality();
   if (current->timestamp == 0) {
@@ -129,13 +129,13 @@ std::unique_ptr<Screen> Weather::CreateScreenAir() {
                           current->timestamp,
                           current->expires);
   }
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::unique_ptr<Screen>(new Screens::Label(0, 5, app, label));
 }
 
 std::unique_ptr<Screen> Weather::CreateScreenClouds() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   std::unique_ptr<Controllers::WeatherData::Clouds>& current = weatherService.GetCurrentClouds();
   if (current->timestamp == 0) {
@@ -158,13 +158,13 @@ std::unique_ptr<Screen> Weather::CreateScreenClouds() {
                           current->timestamp,
                           current->expires);
   }
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::unique_ptr<Screen>(new Screens::Label(0, 5, app, label));
 }
 
 std::unique_ptr<Screen> Weather::CreateScreenPrecipitation() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   std::unique_ptr<Controllers::WeatherData::Precipitation>& current = weatherService.GetCurrentPrecipitation();
   if (current->timestamp == 0) {
@@ -187,13 +187,13 @@ std::unique_ptr<Screen> Weather::CreateScreenPrecipitation() {
                           current->timestamp,
                           current->expires);
   }
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::unique_ptr<Screen>(new Screens::Label(0, 5, app, label));
 }
 
 std::unique_ptr<Screen> Weather::CreateScreenHumidity() {
-  lv_obj_t* label = lv_label_create(lv_scr_act(), nullptr);
+  lv_obj_t* label = lv_label_create(lv_scr_act());
   lv_label_set_recolor(label, true);
   std::unique_ptr<Controllers::WeatherData::Humidity>& current = weatherService.GetCurrentHumidity();
   if (current->timestamp == 0) {
@@ -216,7 +216,7 @@ std::unique_ptr<Screen> Weather::CreateScreenHumidity() {
                           current->timestamp,
                           current->expires);
   }
-  lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
-  lv_obj_align(label, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
   return std::unique_ptr<Screen>(new Screens::Label(0, 5, app, label));
 }
