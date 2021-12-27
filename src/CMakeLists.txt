@@ -202,11 +202,11 @@ set(LVGL_SRC
         libs/lvgl/src/core/lv_refr.h
         libs/lvgl/src/draw/lv_draw.h
         libs/lvgl/src/draw/lv_draw_arc.h
-        libs/lvgl/src/draw/lv_draw_blend.h
+        #libs/lvgl/src/draw/lv_draw_blend.h
         libs/lvgl/src/draw/lv_draw_img.h
         libs/lvgl/src/draw/lv_draw_label.h
         libs/lvgl/src/draw/lv_draw_line.h
-        #libs/lvgl/src/draw/lv_draw_mask.h
+        libs/lvgl/src/draw/lv_draw_mask.h
         libs/lvgl/src/draw/lv_draw_rect.h
         libs/lvgl/src/draw/lv_draw_triangle.h
         libs/lvgl/src/draw/lv_img_buf.h
@@ -298,11 +298,11 @@ set(LVGL_SRC
         libs/lvgl/src/core/lv_obj_tree.c
         libs/lvgl/src/draw/lv_draw.c
         libs/lvgl/src/draw/lv_draw_arc.c
-        libs/lvgl/src/draw/lv_draw_blend.c
+        #libs/lvgl/src/draw/lv_draw_blend.c
         libs/lvgl/src/draw/lv_draw_img.c
         libs/lvgl/src/draw/lv_draw_label.c
         libs/lvgl/src/draw/lv_draw_line.c
-        #libs/lvgl/src/draw/lv_draw_mask.c
+        libs/lvgl/src/draw/lv_draw_mask.c
         libs/lvgl/src/draw/lv_draw_rect.c
         libs/lvgl/src/draw/lv_draw_triangle.c
         libs/lvgl/src/draw/lv_img_buf.c
@@ -316,7 +316,6 @@ set(LVGL_SRC
         libs/lvgl/src/draw/sw/lv_draw_sw_line.c
         libs/lvgl/src/draw/sw/lv_draw_sw_blend.c
         libs/lvgl/src/draw/sw/lv_draw_sw_polygon.c
-        libs/lvgl/src/draw/sw/lv_draw_sw_mask.c
         libs/lvgl/src/font/lv_font.c
         #libs/lvgl/src/font/lv_font_dejavu_16_persian_hebrew.c
         libs/lvgl/src/font/lv_font_fmt_txt.c
