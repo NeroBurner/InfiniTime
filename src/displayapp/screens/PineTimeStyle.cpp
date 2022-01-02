@@ -38,8 +38,9 @@
 using namespace Pinetime::Applications::Screens;
 
 namespace {
-  void event_handler(lv_obj_t* obj, lv_event_t event) {
-    auto* screen = static_cast<PineTimeStyle*>(obj->user_data);
+  void event_handler(lv_event_t *event) {
+    auto* screen = static_cast<PineTimeStyle*>(lv_event_get_user_data(event));
+    lv_obj_t *obj = lv_event_get_target(event);
     screen->UpdateSelected(obj, event);
   }
 }
@@ -65,6 +66,8 @@ PineTimeStyle::PineTimeStyle(DisplayApp* app,
   displayedChar[2] = 0;
   displayedChar[3] = 0;
   displayedChar[4] = 0;
+
+  lv_obj_t *label; // temporary pointer to set label for buttons
 
   // Create a 200px wide background rectangle
   timebar = lv_obj_create(lv_scr_act());
@@ -101,7 +104,7 @@ PineTimeStyle::PineTimeStyle(DisplayApp* app,
 
   // Display icons
   batteryIcon = lv_label_create(sidebar);
-  lv_obj_set_style_text_color(batteryIcon, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(batteryIcon, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(batteryIcon, Symbols::batteryFull);
   lv_obj_align(batteryIcon, LV_ALIGN_TOP_MID, 0, 2);
 
@@ -115,54 +118,54 @@ PineTimeStyle::PineTimeStyle(DisplayApp* app,
 
   // Calendar icon
   calendarOuter = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarOuter, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarOuter, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarOuter, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarOuter, 34, 34);
   lv_obj_align_to(calendarOuter, sidebar, LV_ALIGN_CENTER, 0, 0);
 
   calendarInner = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarInner, LV_COLOR_WHITE, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarInner, lv_color_white(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarInner, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarInner, 27, 27);
   lv_obj_align_to(calendarInner, calendarOuter, LV_ALIGN_CENTER, 0, 0);
 
   calendarBar1 = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarBar1, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarBar1, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarBar1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarBar1, 3, 12);
   lv_obj_align_to(calendarBar1, calendarOuter, LV_ALIGN_TOP_MID, -6, -3);
 
   calendarBar2 = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarBar2, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarBar2, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarBar2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarBar2, 3, 12);
   lv_obj_align_to(calendarBar2, calendarOuter, LV_ALIGN_TOP_MID, 6, -3);
 
   calendarCrossBar1 = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarCrossBar1, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarCrossBar1, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarCrossBar1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarCrossBar1, 8, 3);
   lv_obj_align_to(calendarCrossBar1, calendarBar1, LV_ALIGN_BOTTOM_MID, 0, 0);
 
   calendarCrossBar2 = lv_obj_create(lv_scr_act());
-  lv_obj_set_style_bg_color(calendarCrossBar2, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(calendarCrossBar2, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_radius(calendarCrossBar2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_size(calendarCrossBar2, 8, 3);
   lv_obj_align_to(calendarCrossBar2, calendarBar2, LV_ALIGN_BOTTOM_MID, 0, 0);
 
   // Display date
   dateDayOfWeek = lv_label_create(lv_scr_act());
-  lv_obj_set_style_text_color(dateDayOfWeek, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(dateDayOfWeek, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(dateDayOfWeek, "THU");
   lv_obj_align_to(dateDayOfWeek, sidebar, LV_ALIGN_CENTER, 0, -34);
 
   dateDay = lv_label_create(calendarInner);
-  lv_obj_set_style_text_color(dateDay, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(dateDay, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(dateDay, "25");
   lv_obj_center(dateDay);
 
   dateMonth = lv_label_create(lv_scr_act());
-  lv_obj_set_style_text_color(dateMonth, LV_COLOR_BLACK, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_text_color(dateMonth, lv_color_black(), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text(dateMonth, "MAR");
   lv_obj_align_to(dateMonth, sidebar, LV_ALIGN_CENTER, 0, 32);
 
@@ -181,7 +184,7 @@ PineTimeStyle::PineTimeStyle(DisplayApp* app,
   lv_obj_center(stepMeter);
 
   stepScale = lv_meter_add_scale(stepMeter);
-  stepIndicator = lv_meter_add_needle_line(stepMeter, stepScale, 2, needle_color, -6);
+  stepIndicator = lv_meter_add_needle_line(stepMeter, stepScale, 2, needle_colors[0], -6);
   lv_meter_set_scale_range(stepMeter, stepScale, 0, 100, 360, 180);
   lv_meter_set_scale_ticks(stepMeter, stepScale, 11, 4, 4, lv_color_black());
   lv_meter_set_indicator_value(stepMeter, stepIndicator, 0);
@@ -200,98 +203,106 @@ PineTimeStyle::PineTimeStyle(DisplayApp* app,
   lv_label_set_text(backgroundLabel, "");
 
   btnNextTime = lv_btn_create(lv_scr_act());
-  btnNextTime->user_data = this;
   lv_obj_set_size(btnNextTime, 60, 60);
-  lv_obj_align(btnNextTime, lv_scr_act(), LV_ALIGN_IN_RIGHT_MID, -15, -80);
-  lv_obj_set_style_local_bg_opa(btnNextTime, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnNextTime, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ">");
-  lv_obj_set_event_cb(btnNextTime, event_handler);
-  lv_obj_set_hidden(btnNextTime, true);
+  lv_obj_align(btnNextTime, LV_ALIGN_RIGHT_MID, -15, -80);
+  lv_obj_set_style_bg_opa(btnNextTime, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnNextTime);
+  lv_label_set_text_static(label, ">");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnNextTime, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnNextTime, LV_OBJ_FLAG_HIDDEN);
 
   btnPrevTime = lv_btn_create(lv_scr_act());
-  btnPrevTime->user_data = this;
   lv_obj_set_size(btnPrevTime, 60, 60);
-  lv_obj_align(btnPrevTime, lv_scr_act(), LV_ALIGN_IN_LEFT_MID, 15, -80);
-  lv_obj_set_style_local_bg_opa(btnPrevTime, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnPrevTime, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "<");
-  lv_obj_set_event_cb(btnPrevTime, event_handler);
-  lv_obj_set_hidden(btnPrevTime, true);
+  lv_obj_align(btnPrevTime, LV_ALIGN_LEFT_MID, 15, -80);
+  lv_obj_set_style_bg_opa(btnPrevTime, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnPrevTime);
+  lv_label_set_text_static(label, "<");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnPrevTime, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnPrevTime, LV_OBJ_FLAG_HIDDEN);
 
   btnNextBar = lv_btn_create(lv_scr_act());
-  btnNextBar->user_data = this;
   lv_obj_set_size(btnNextBar, 60, 60);
-  lv_obj_align(btnNextBar, lv_scr_act(), LV_ALIGN_IN_RIGHT_MID, -15, 0);
-  lv_obj_set_style_local_bg_opa(btnNextBar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnNextBar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ">");
-  lv_obj_set_event_cb(btnNextBar, event_handler);
-  lv_obj_set_hidden(btnNextBar, true);
+  lv_obj_align(btnNextBar, LV_ALIGN_RIGHT_MID, -15, 0);
+  lv_obj_set_style_bg_opa(btnNextBar, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnNextBar);
+  lv_label_set_text_static(label, ">");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnNextBar, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnNextBar, LV_OBJ_FLAG_HIDDEN);
 
   btnPrevBar = lv_btn_create(lv_scr_act());
-  btnPrevBar->user_data = this;
   lv_obj_set_size(btnPrevBar, 60, 60);
-  lv_obj_align(btnPrevBar, lv_scr_act(), LV_ALIGN_IN_LEFT_MID, 15, 0);
-  lv_obj_set_style_local_bg_opa(btnPrevBar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnPrevBar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "<");
-  lv_obj_set_event_cb(btnPrevBar, event_handler);
-  lv_obj_set_hidden(btnPrevBar, true);
+  lv_obj_align(btnPrevBar, LV_ALIGN_LEFT_MID, 15, 0);
+  lv_obj_set_style_bg_opa(btnPrevBar, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnPrevBar);
+  lv_label_set_text_static(label, "<");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnPrevBar, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnPrevBar, LV_OBJ_FLAG_HIDDEN);
 
   btnNextBG = lv_btn_create(lv_scr_act());
-  btnNextBG->user_data = this;
   lv_obj_set_size(btnNextBG, 60, 60);
-  lv_obj_align(btnNextBG, lv_scr_act(), LV_ALIGN_IN_RIGHT_MID, -15, 80);
-  lv_obj_set_style_local_bg_opa(btnNextBG, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnNextBG, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, ">");
-  lv_obj_set_event_cb(btnNextBG, event_handler);
-  lv_obj_set_hidden(btnNextBG, true);
+  lv_obj_align(btnNextBG, LV_ALIGN_RIGHT_MID, -15, 80);
+  lv_obj_set_style_bg_opa(btnNextBG, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnNextBG);
+  lv_label_set_text_static(label, ">");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnNextBG, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnNextBG, LV_OBJ_FLAG_HIDDEN);
 
   btnPrevBG = lv_btn_create(lv_scr_act());
-  btnPrevBG->user_data = this;
   lv_obj_set_size(btnPrevBG, 60, 60);
-  lv_obj_align(btnPrevBG, lv_scr_act(), LV_ALIGN_IN_LEFT_MID, 15, 80);
-  lv_obj_set_style_local_bg_opa(btnPrevBG, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnPrevBG, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "<");
-  lv_obj_set_event_cb(btnPrevBG, event_handler);
-  lv_obj_set_hidden(btnPrevBG, true);
+  lv_obj_align(btnPrevBG, LV_ALIGN_LEFT_MID, 15, 80);
+  lv_obj_set_style_bg_opa(btnPrevBG, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnPrevBG);
+  lv_label_set_text_static(label, "<");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnPrevBG, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnPrevBG, LV_OBJ_FLAG_HIDDEN);
 
   btnReset = lv_btn_create(lv_scr_act());
-  btnReset->user_data = this;
   lv_obj_set_size(btnReset, 60, 60);
-  lv_obj_align(btnReset, lv_scr_act(), LV_ALIGN_CENTER, 0, 80);
-  lv_obj_set_style_local_bg_opa(btnReset, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnReset, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "Rst");
-  lv_obj_set_event_cb(btnReset, event_handler);
-  lv_obj_set_hidden(btnReset, true);
+  lv_obj_align(btnReset, LV_ALIGN_CENTER, 0, 80);
+  lv_obj_set_style_bg_opa(btnReset, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnReset);
+  lv_label_set_text_static(label, "Rst");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnReset, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnReset, LV_OBJ_FLAG_HIDDEN);
 
   btnRandom = lv_btn_create(lv_scr_act());
-  btnRandom->user_data = this;
   lv_obj_set_size(btnRandom, 60, 60);
-  lv_obj_align(btnRandom, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
-  lv_obj_set_style_local_bg_opa(btnRandom, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnRandom, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "Rnd");
-  lv_obj_set_event_cb(btnRandom, event_handler);
-  lv_obj_set_hidden(btnRandom, true);
+  lv_obj_align(btnRandom, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_bg_opa(btnRandom, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnRandom);
+  lv_label_set_text_static(label, "Rnd");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnRandom, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnRandom, LV_OBJ_FLAG_HIDDEN);
 
   btnClose = lv_btn_create(lv_scr_act());
-  btnClose->user_data = this;
   lv_obj_set_size(btnClose, 60, 60);
-  lv_obj_align(btnClose, lv_scr_act(), LV_ALIGN_CENTER, 0, -80);
-  lv_obj_set_style_local_bg_opa(btnClose, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_style_local_value_str(btnClose, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, "X");
-  lv_obj_set_event_cb(btnClose, event_handler);
-  lv_obj_set_hidden(btnClose, true);
+  lv_obj_align(btnClose, LV_ALIGN_CENTER, 0, -80);
+  lv_obj_set_style_bg_opa(btnClose, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  label = lv_label_create(btnClose);
+  lv_label_set_text_static(label, "X");
+  lv_obj_center(label);
+  lv_obj_add_event_cb(btnClose, event_handler, LV_EVENT_CLICKED, this);
+  lv_obj_add_flag(btnClose, LV_OBJ_FLAG_HIDDEN);
 
   btnSet = lv_btn_create(lv_scr_act());
-  btnSet->user_data = this;
   lv_obj_set_height(btnSet, 150);
   lv_obj_set_width(btnSet, 150);
-  lv_obj_align(btnSet, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
-  lv_obj_set_style_local_radius(btnSet, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 30);
-  lv_obj_set_style_local_bg_opa(btnSet, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_50);
-  lv_obj_set_event_cb(btnSet, event_handler);
+  lv_obj_align(btnSet, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_style_radius(btnSet, 30, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_opa(btnSet, LV_OPA_50, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_event_cb(btnSet, event_handler, LV_EVENT_CLICKED, this);
   lbl_btnSet = lv_label_create(btnSet);
-  lv_obj_set_style_local_text_font(lbl_btnSet, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_sys_48);
+  lv_obj_set_style_text_font(lbl_btnSet, &lv_font_sys_48, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text_static(lbl_btnSet, Symbols::settings);
-  lv_obj_set_hidden(btnSet, true);
+  lv_obj_add_flag(btnSet, LV_OBJ_FLAG_HIDDEN);
 
   taskRefresh = lv_timer_create(RefreshTaskCallback, LV_DISP_DEF_REFR_PERIOD, this);
   Refresh();
@@ -303,12 +314,12 @@ PineTimeStyle::~PineTimeStyle() {
 }
 
 bool PineTimeStyle::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
-  if ((event == Pinetime::Applications::TouchEvents::LongTap) && lv_obj_get_hidden(btnRandom)) {
-    lv_obj_set_hidden(btnSet, false);
+  if ((event == Pinetime::Applications::TouchEvents::LongTap) && lv_obj_has_flag(btnRandom, LV_OBJ_FLAG_HIDDEN)) {
+    lv_obj_clear_flag(btnSet, LV_OBJ_FLAG_HIDDEN);
     savedTick = lv_tick_get();
     return true;
   }
-  if ((event == Pinetime::Applications::TouchEvents::DoubleTap) && (lv_obj_get_hidden(btnRandom) == false)) {
+  if ((event == Pinetime::Applications::TouchEvents::DoubleTap) && (lv_obj_has_flag(btnRandom, LV_OBJ_FLAG_HIDDEN) == false)) {
     return true;
   }
   return false;
@@ -316,19 +327,19 @@ bool PineTimeStyle::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
 
 void PineTimeStyle::CloseMenu() {
   settingsController.SaveSettings();
-  lv_obj_set_hidden(btnNextTime, true);
-  lv_obj_set_hidden(btnPrevTime, true);
-  lv_obj_set_hidden(btnNextBar, true);
-  lv_obj_set_hidden(btnPrevBar, true);
-  lv_obj_set_hidden(btnNextBG, true);
-  lv_obj_set_hidden(btnPrevBG, true);
-  lv_obj_set_hidden(btnReset, true);
-  lv_obj_set_hidden(btnRandom, true);
-  lv_obj_set_hidden(btnClose, true);
+  lv_obj_add_flag(btnNextTime, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnPrevTime, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnNextBar, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnPrevBar, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnNextBG, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnPrevBG, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnReset, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnRandom, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_add_flag(btnClose, LV_OBJ_FLAG_HIDDEN);
 }
 
 bool PineTimeStyle::OnButtonPushed() {
-  if (!lv_obj_get_hidden(btnClose)) {
+  if (!lv_obj_has_flag(btnClose, LV_OBJ_FLAG_HIDDEN)) {
     CloseMenu();
     return true;
   }
@@ -452,29 +463,29 @@ void PineTimeStyle::Refresh() {
       lv_obj_set_style_bg_grad_color(stepMeter, lv_color_white(), LV_PART_TICKS | LV_STATE_DEFAULT);
     }
   }
-  if (!lv_obj_get_hidden(btnSet)) {
+  if (!lv_obj_has_flag(btnSet, LV_OBJ_FLAG_HIDDEN)) {
     if ((savedTick > 0) && (lv_tick_get() - savedTick > 3000)) {
-      lv_obj_set_hidden(btnSet, true);
+      lv_obj_add_flag(btnSet, LV_OBJ_FLAG_HIDDEN);
       savedTick = 0;
     }
   }
 }
 
-void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
+void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t *event) {
   auto valueTime = settingsController.GetPTSColorTime();
   auto valueBar = settingsController.GetPTSColorBar();
   auto valueBG = settingsController.GetPTSColorBG();
 
-  if (event == LV_EVENT_CLICKED) {
+  if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
     if (object == btnNextTime) {
       valueTime = GetNext(valueTime);
       if (valueTime == valueBG) {
         valueTime = GetNext(valueTime);
       }
       settingsController.SetPTSColorTime(valueTime);
-      lv_obj_set_style_local_text_color(timeDD1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeDD2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeAMPM, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
+      lv_obj_set_style_text_color(timeDD1, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeDD2, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeAMPM, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnPrevTime) {
       valueTime = GetPrevious(valueTime);
@@ -482,9 +493,9 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueTime = GetPrevious(valueTime);
       }
       settingsController.SetPTSColorTime(valueTime);
-      lv_obj_set_style_local_text_color(timeDD1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeDD2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeAMPM, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
+      lv_obj_set_style_text_color(timeDD1, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeDD2, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeAMPM, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnNextBar) {
       valueBar = GetNext(valueBar);
@@ -492,12 +503,12 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueBar = GetNext(valueBar);
       }
       if (valueBar == Controllers::Settings::Colors::White) {
-        needle_colors[0] = LV_COLOR_BLACK;
+        needle_colors[0] = lv_color_black();
       } else {
-        needle_colors[0] = LV_COLOR_WHITE;
+        needle_colors[0] = lv_color_white();
       }
       settingsController.SetPTSColorBar(valueBar);
-      lv_obj_set_style_local_bg_color(sidebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBar));
+      lv_obj_set_style_bg_color(sidebar, Convert(valueBar), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnPrevBar) {
       valueBar = GetPrevious(valueBar);
@@ -505,12 +516,12 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueBar = GetPrevious(valueBar);
       }
       if (valueBar == Controllers::Settings::Colors::White) {
-        needle_colors[0] = LV_COLOR_BLACK;
+        needle_colors[0] = lv_color_black();
       } else {
-        needle_colors[0] = LV_COLOR_WHITE;
+        needle_colors[0] = lv_color_white();
       }
       settingsController.SetPTSColorBar(valueBar);
-      lv_obj_set_style_local_bg_color(sidebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBar));
+      lv_obj_set_style_bg_color(sidebar, Convert(valueBar), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnNextBG) {
       valueBG = GetNext(valueBG);
@@ -518,7 +529,7 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueBG = GetNext(valueBG);
       }
       settingsController.SetPTSColorBG(valueBG);
-      lv_obj_set_style_local_bg_color(timebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBG));
+      lv_obj_set_style_bg_color(timebar, Convert(valueBG), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnPrevBG) {
       valueBG = GetPrevious(valueBG);
@@ -526,18 +537,18 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueBG = GetPrevious(valueBG);
       }
       settingsController.SetPTSColorBG(valueBG);
-      lv_obj_set_style_local_bg_color(timebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBG));
+      lv_obj_set_style_bg_color(timebar, Convert(valueBG), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnReset) {
-      needle_colors[0] = LV_COLOR_WHITE;
+      needle_colors[0] = lv_color_white();
       settingsController.SetPTSColorTime(Controllers::Settings::Colors::Teal);
-      lv_obj_set_style_local_text_color(timeDD1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(Controllers::Settings::Colors::Teal));
-      lv_obj_set_style_local_text_color(timeDD2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(Controllers::Settings::Colors::Teal));
-      lv_obj_set_style_local_text_color(timeAMPM, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(Controllers::Settings::Colors::Teal));
+      lv_obj_set_style_text_color(timeDD1, Convert(Controllers::Settings::Colors::Teal), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeDD2, Convert(Controllers::Settings::Colors::Teal), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeAMPM, Convert(Controllers::Settings::Colors::Teal), LV_PART_MAIN | LV_STATE_DEFAULT);
       settingsController.SetPTSColorBar(Controllers::Settings::Colors::Teal);
-      lv_obj_set_style_local_bg_color(sidebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(Controllers::Settings::Colors::Teal));
+      lv_obj_set_style_bg_color(sidebar, Convert(Controllers::Settings::Colors::Teal), LV_PART_MAIN | LV_STATE_DEFAULT);
       settingsController.SetPTSColorBG(Controllers::Settings::Colors::Black);
-      lv_obj_set_style_local_bg_color(timebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(Controllers::Settings::Colors::Black));
+      lv_obj_set_style_bg_color(timebar, Convert(Controllers::Settings::Colors::Black), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnRandom) {
       valueTime = static_cast<Controllers::Settings::Colors>(rand() % 17);
@@ -550,33 +561,33 @@ void PineTimeStyle::UpdateSelected(lv_obj_t* object, lv_event_t event) {
         valueBar = GetPrevious(valueBar);
       }
       if (valueBar == Controllers::Settings::Colors::White) {
-        needle_colors[0] = LV_COLOR_BLACK;
+        needle_colors[0] = lv_color_black();
       } else {
-        needle_colors[0] = LV_COLOR_WHITE;
+        needle_colors[0] = lv_color_white();
       }
       settingsController.SetPTSColorTime(static_cast<Controllers::Settings::Colors>(valueTime));
-      lv_obj_set_style_local_text_color(timeDD1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeDD2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
-      lv_obj_set_style_local_text_color(timeAMPM, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(valueTime));
+      lv_obj_set_style_text_color(timeDD1, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeDD2, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
+      lv_obj_set_style_text_color(timeAMPM, Convert(valueTime), LV_PART_MAIN | LV_STATE_DEFAULT);
       settingsController.SetPTSColorBar(static_cast<Controllers::Settings::Colors>(valueBar));
-      lv_obj_set_style_local_bg_color(sidebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBar));
+      lv_obj_set_style_bg_color(sidebar, Convert(valueBar), LV_PART_MAIN | LV_STATE_DEFAULT);
       settingsController.SetPTSColorBG(static_cast<Controllers::Settings::Colors>(valueBG));
-      lv_obj_set_style_local_bg_color(timebar, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, Convert(valueBG));
+      lv_obj_set_style_bg_color(timebar, Convert(valueBG), LV_PART_MAIN | LV_STATE_DEFAULT);
     }
     if (object == btnClose) {
       CloseMenu();
     }
     if (object == btnSet) {
-      lv_obj_set_hidden(btnSet, true);
-      lv_obj_set_hidden(btnNextTime, false);
-      lv_obj_set_hidden(btnPrevTime, false);
-      lv_obj_set_hidden(btnNextBar, false);
-      lv_obj_set_hidden(btnPrevBar, false);
-      lv_obj_set_hidden(btnNextBG, false);
-      lv_obj_set_hidden(btnPrevBG, false);
-      lv_obj_set_hidden(btnReset, false);
-      lv_obj_set_hidden(btnRandom, false);
-      lv_obj_set_hidden(btnClose, false);
+      lv_obj_add_flag(btnSet, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnNextTime, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnPrevTime, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnNextBar, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnPrevBar, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnNextBG, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnPrevBG, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnReset, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnRandom, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(btnClose, LV_OBJ_FLAG_HIDDEN);
     }
   }
 }
