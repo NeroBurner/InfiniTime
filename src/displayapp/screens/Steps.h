@@ -20,7 +20,7 @@ namespace Pinetime {
         ~Steps() override;
 
         void Refresh() override;
-        void lapBtnEventHandler(lv_event_t event);
+        void lapBtnEventHandler(lv_event_t *event);
 
       private:
         Controllers::MotionController& motionController;

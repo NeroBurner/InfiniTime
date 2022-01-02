@@ -5,8 +5,8 @@
 
 using namespace Pinetime::Applications::Screens;
 
-static void lap_event_handler(lv_obj_t* obj, lv_event_t event) {
-  auto* steps = static_cast<Steps*>(obj->user_data);
+static void lap_event_handler(lv_event_t *event) {
+  auto* steps = static_cast<Steps*>(lv_event_get_user_data(event));
   steps->lapBtnEventHandler(event);
 }
 
@@ -56,20 +56,19 @@ Steps::Steps(Pinetime::Applications::DisplayApp* app,
   lv_label_set_text_static(backgroundLabel, "");
 
   resetBtn = lv_btn_create(lv_scr_act());
-  resetBtn->user_data = this;
-  lv_obj_set_event_cb(resetBtn, lap_event_handler);
+  lv_obj_add_event_cb(resetBtn, lap_event_handler, LV_EVENT_CLICKED, this);
   lv_obj_set_height(resetBtn, 50);
   lv_obj_set_width(resetBtn, 115);
-  lv_obj_align(resetBtn, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
+  lv_obj_align(resetBtn, LV_ALIGN_BOTTOM_MID, 0, 0);
   resetButtonLabel = lv_label_create(resetBtn);
   lv_label_set_text(resetButtonLabel, "Reset");
 
   currentTripSteps = motionController.GetTripSteps();
 
   tripLabel = lv_label_create(lv_scr_act());
-  lv_obj_set_style_text_color(tripLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_YELLOW);
+  lv_obj_set_style_text_color(tripLabel, lv_palette_main(LV_PALETTE_YELLOW), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_label_set_text_fmt(tripLabel, "Trip: %5li", currentTripSteps);
-  lv_obj_align_to(tripLabel, lstepsGoal, LV_ALIGN_IN_LEFT_MID, 0, 20);
+  lv_obj_align_to(tripLabel, lstepsGoal, LV_ALIGN_LEFT_MID, 0, 20);
 
   taskRefresh = lv_timer_create(RefreshTaskCallback, 100, this);
 }
@@ -94,8 +93,8 @@ void Steps::Refresh() {
   lv_arc_set_value(stepsArc, int16_t(500 * stepsCount / settingsController.GetStepsGoal()));
 }
 
-void Steps::lapBtnEventHandler(lv_event_t event) {
-  if (event != LV_EVENT_CLICKED) {
+void Steps::lapBtnEventHandler(lv_event_t *event) {
+  if (lv_event_get_code(event) != LV_EVENT_CLICKED) {
     return;
   }
   stepsCount = motionController.NbSteps();
