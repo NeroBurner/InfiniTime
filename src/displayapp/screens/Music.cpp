@@ -282,7 +282,7 @@ bool Music::OnTouchEvent(Pinetime::Applications::TouchEvents event) {
       return true;
     }
     case TouchEvents::SwipeDown: {
-      if (lv_obj_get_hidden(btnNext)) {
+      if (lv_obj_has_flag(btnNext, LV_OBJ_FLAG_HIDDEN)) {
         lv_obj_clear_flag(btnNext, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(btnPrev, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(btnVolDown, LV_OBJ_FLAG_HIDDEN);
