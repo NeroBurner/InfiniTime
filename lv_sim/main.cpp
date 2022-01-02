@@ -448,6 +448,9 @@ public:
       else if (screen_idx == 11) {
         screen.reset(MusicScreen());
       }
+      else if (screen_idx == 12) {
+        screen.reset(InfiniPaintScreen());
+      }
       else {
         std::cout << "unhandled screen_idx: " << int(screen_idx) << std::endl;
       }
