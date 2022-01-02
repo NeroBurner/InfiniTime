@@ -130,6 +130,9 @@ public:
         brightnessController.Set(settingsController.GetBrightness());
         const auto clockface = settingsController.GetClockFace();
 
+        lv_mem_monitor(&mem_mon);
+        printf("initial free_size = %u\n", mem_mon.free_size);
+
         // initialize the first LVGL screen
         switch_to_screen(1+clockface);
     }
@@ -451,6 +454,9 @@ public:
     }
     // render the current status of the simulated controller
     void refresh_screen() {
+      // print free memory with the knowledge that 14KiB RAM is the actual PineTime-Memory
+      lv_mem_monitor(&mem_mon);
+      printf("actual free_size = %d\n", int64_t(mem_mon.free_size) - (LV_MEM_SIZE - 14U*1024U));
       if (!screen)
         return;
       if (typeid(*screen.get()) == typeid(Pinetime::Applications::Screens::Paddle)) {
@@ -477,6 +483,8 @@ public:
     Pinetime::Controllers::FS fsController;
     Pinetime::Controllers::Settings settingsController;
     Pinetime::System::SystemTask systemTask;
+
+    lv_mem_monitor_t mem_mon;
 
     std::unique_ptr<Pinetime::Applications::Screens::Screen> screen;
 
