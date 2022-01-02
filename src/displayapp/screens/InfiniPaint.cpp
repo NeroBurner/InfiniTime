@@ -54,6 +54,9 @@ InfiniPaint::InfiniPaint(Pinetime::Applications::DisplayApp* app,
 }
 
 InfiniPaint::~InfiniPaint() {
+  lv_obj_remove_event_cb(lv_scr_act(), lv_touch_event);
+  lv_obj_remove_event_cb(lv_scr_act(), lv_touch_event);
+  lv_obj_remove_event_cb(lv_scr_act(), lv_touch_event);
   lv_obj_clean(lv_scr_act());
 }
 
