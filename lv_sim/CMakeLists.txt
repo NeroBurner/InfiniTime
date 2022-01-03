@@ -7,8 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE INCLUDES "lv_drivers/*.h" "../src/libs/lvgl/src/*.h"  "./*.h" )
 file(GLOB_RECURSE SOURCES  "lv_drivers/*.c" "../src/libs/lvgl/src/*.c" )
 
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin) 
-
 add_executable(main main.cpp mouse_cursor_icon.c ${SOURCES} ${INCLUDES})
 #message("add_executable(main main.c mouse_cursor_icon.c ${SOURCES} ${INCLUDES})")
 
