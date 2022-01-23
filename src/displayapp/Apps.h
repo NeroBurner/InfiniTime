@@ -4,6 +4,7 @@ namespace Pinetime {
   namespace Applications {
     enum class Apps {
       None,
+      Missing,
       Launcher,
       Clock,
       SysInfo,
