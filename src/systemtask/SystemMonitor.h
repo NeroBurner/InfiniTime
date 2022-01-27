@@ -13,12 +13,8 @@ namespace Pinetime {
       SystemMonitor() = delete;
     };
 
-    template <> class SystemMonitor<DummyMonitor> {
-    public:
-      void Process() const {
-      }
-    };
 
+#if configUSE_TRACE_FACILITY == 1
     template <> class SystemMonitor<FreeRtosMonitor> {
     public:
       void Process() const {
@@ -40,5 +36,12 @@ namespace Pinetime {
       mutable TickType_t lastTick = 0;
       mutable TaskStatus_t tasksStatus[10];
     };
+#else
+    template <> class SystemMonitor<DummyMonitor> {
+    public:
+      void Process() const {
+      }
+    };
+#endif
   }
 }
