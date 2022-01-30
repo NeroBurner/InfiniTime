@@ -33,6 +33,7 @@
 #include "components/battery/BatteryController.h"
 #include "components/ble/BleController.h"
 #include "components/ble/NotificationManager.h"
+#include "components/brightness/BrightnessController.h"
 #include "components/motor/MotorController.h"
 #include "components/datetime/DateTimeController.h"
 #include "components/heartrate/HeartRateController.h"
@@ -114,6 +115,7 @@ Pinetime::Controllers::ButtonHandler buttonHandler;
 Pinetime::Controllers::FS fs {spiNorFlash};
 Pinetime::Controllers::Settings settingsController {fs};
 Pinetime::Controllers::MotorController motorController {};
+Pinetime::Controllers::BrightnessController brightnessController {};
 
 Pinetime::Applications::DisplayApp displayApp(lcd,
                                               lvgl,
@@ -129,6 +131,7 @@ Pinetime::Applications::DisplayApp displayApp(lcd,
                                               motionController,
                                               timerController,
                                               alarmController,
+                                              brightnessController,
                                               touchHandler);
 
 Pinetime::System::SystemTask systemTask(spi,
