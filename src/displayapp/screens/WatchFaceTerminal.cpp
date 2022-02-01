@@ -35,13 +35,6 @@ WatchFaceTerminal::WatchFaceTerminal(DisplayApp* app,
     motionController {motionController} {
   settingsController.SetClockFace(3);
 
-  displayedChar[0] = 0;
-  displayedChar[1] = 0;
-  displayedChar[2] = 0;
-  displayedChar[3] = 0;
-  displayedChar[4] = 0;
-  displayedChar[5] = 0;
-
   batteryIcon = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text(batteryIcon, Symbols::batteryFull);
   lv_obj_align(batteryIcon, lv_scr_act(), LV_ALIGN_IN_BOTTOM_RIGHT, -5, 2);
@@ -50,9 +43,9 @@ WatchFaceTerminal::WatchFaceTerminal(DisplayApp* app,
   lv_label_set_text(batteryPlug, Symbols::plug);
   lv_obj_align(batteryPlug, batteryIcon, LV_ALIGN_OUT_LEFT_MID, -5, 0);
 
-  batteryPercent = lv_label_create(lv_scr_act(), nullptr);
-  lv_label_set_recolor(batteryPercent, true);
-  lv_obj_align(batteryPercent, lv_scr_act(), LV_ALIGN_IN_LEFT_MID, 0, -20);
+  batteryValue = lv_label_create(lv_scr_act(), nullptr);
+  lv_label_set_recolor(batteryValue, true);
+  lv_obj_align(batteryValue, lv_scr_act(), LV_ALIGN_IN_LEFT_MID, 0, -20);
 
   connectState = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_recolor(connectState, true);
@@ -109,25 +102,32 @@ WatchFaceTerminal::~WatchFaceTerminal() {
   lv_obj_clean(lv_scr_act());
 }
 
-  void WatchFaceTerminal::Refresh() {
+void WatchFaceTerminal::Refresh() {
+  powerPresent = batteryController.IsPowerPresent();
+  if (powerPresent.IsUpdated()) {
+    lv_label_set_text_static(batteryPlug, BatteryIcon::GetPlugIcon(powerPresent.Get()));
+  }
+
   batteryPercentRemaining = batteryController.PercentRemaining();
   if (batteryPercentRemaining.IsUpdated()) {
     auto batteryPercent = batteryPercentRemaining.Get();
+    if (batteryPercent == 100) {
+      lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_GREEN);
+    } else {
+      lv_obj_set_style_local_text_color(batteryIcon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    }
     lv_label_set_text(batteryIcon, BatteryIcon::GetBatteryIcon(batteryPercent));
-    auto isCharging = batteryController.IsCharging() || batteryController.IsPowerPresent();
-    lv_label_set_text(batteryPlug, BatteryIcon::GetPlugIcon(isCharging));
+    lv_label_set_text_fmt(batteryValue, "[BATT]#387b54 %d%\%#", batteryPercent);
   }
 
-  /*char* bleValue;*/
+  bleState = bleController.IsConnected();
   if (bleState.IsUpdated()) {
-    char bleStr[24];
-    sprintf(bleStr, "[STAT]#387b54 %s#",bleController.IsConnected() ? "Connected" : "Disconnected");
-    lv_label_set_text(connectState, bleStr);
+    if (bleState.Get()) {
+      lv_label_set_text_static(connectState, "[STAT]#387b54 Connected#");
+    } else {
+      lv_label_set_text_static(connectState, "[STAT]#387b54 Disconnected#");
+    }
   }
-
-  lv_obj_align(batteryIcon, lv_scr_act(), LV_ALIGN_IN_TOP_RIGHT, -5, 5);
-  lv_obj_align(batteryPlug, batteryIcon, LV_ALIGN_OUT_LEFT_MID, -5, 0);
-  //lv_obj_align(bleIcon, batteryPlug, LV_ALIGN_OUT_LEFT_MID, -5, 0);
 
   notificationState = notificatioManager.AreNewNotificationsAvailable();
   if (notificationState.IsUpdated()) {
@@ -147,81 +147,38 @@ WatchFaceTerminal::~WatchFaceTerminal() {
     auto time = date::make_time(newDateTime - dp);
     auto yearMonthDay = date::year_month_day(dp);
 
-    auto year = (int) yearMonthDay.year();
-    auto month = static_cast<Pinetime::Controllers::DateTime::Months>((unsigned) yearMonthDay.month());
-    auto day = (unsigned) yearMonthDay.day();
+    auto year = static_cast<int>(yearMonthDay.year());
+    auto month = static_cast<Pinetime::Controllers::DateTime::Months>(static_cast<unsigned>(yearMonthDay.month()));
+    auto day = static_cast<unsigned>(yearMonthDay.day());
     auto dayOfWeek = static_cast<Pinetime::Controllers::DateTime::Days>(date::weekday(yearMonthDay).iso_encoding());
 
-    int hour = time.hours().count();
-    auto minute = time.minutes().count();
-    auto second = time.seconds().count();
+    uint8_t hour = time.hours().count();
+    uint8_t minute = time.minutes().count();
+    uint8_t second = time.seconds().count();
 
-    char minutesChar[6];
-    sprintf(minutesChar, "%02d", static_cast<int>(minute));
-
-    char hoursChar[8];
-
-    char ampmChar[3];
-    if (settingsController.GetClockType() == Controllers::Settings::ClockType::H24) {
-      sprintf(hoursChar, "%02d", hour);
-    } else {
-      if (hour == 0 && hour != 12) {
-        hour = 12;
-        sprintf(ampmChar, "AM");
-      } else if (hour == 12 && hour != 0) {
-        hour = 12;
-        sprintf(ampmChar, "PM");
-      } else if (hour < 12 && hour != 0) {
-        sprintf(ampmChar, "AM");
-      } else if (hour > 12 && hour != 0) {
-        hour = hour - 12;
-        sprintf(ampmChar, "PM");
-      }
-      sprintf(hoursChar, "%02d", hour);
-    }
-
-    char secondsChar[5];
-    sprintf(secondsChar, "%02d", static_cast<int>(second));
-
-    auto batteryValue = static_cast<uint8_t>(batteryController.PercentRemaining());
-    char battStr[24];
-    sprintf(battStr, "[BATT]#387b54 %d%\%#", batteryValue);
-    lv_label_set_text(batteryPercent, battStr);
-
-    if (hoursChar[0] != displayedChar[0] || hoursChar[1] != displayedChar[1] || minutesChar[0] != displayedChar[2] ||
-        minutesChar[1] != displayedChar[3] || secondsChar[0] != displayedChar[4] || secondsChar[1] != displayedChar[5]) {
-      displayedChar[0] = hoursChar[0];
-      displayedChar[1] = hoursChar[1];
-      displayedChar[2] = minutesChar[0];
-      displayedChar[3] = minutesChar[1];
-      displayedChar[4] = secondsChar[0];
-      displayedChar[5] = secondsChar[1];
+    if (displayedHour != hour || displayedMinute != minute || displayedSecond != second) {
+      displayedHour = hour;
+      displayedMinute = minute;
+      displayedSecond = second;
 
       if (settingsController.GetClockType() == Controllers::Settings::ClockType::H12) {
-        if (hoursChar[0] == '0') {
-          hoursChar[0] = ' ';
+        char ampmChar[3] = "AM";
+        if (hour == 0) {
+          hour = 12;
+        } else if (hour == 12) {
+          ampmChar[0] = 'P';
+        } else if (hour > 12) {
+          hour = hour - 12;
+          ampmChar[0] = 'P';
         }
+        lv_label_set_text_fmt(label_time, "[TIME]#11cc55 %02d:%02d:%02d %s#", hour, minute, second, ampmChar);
+      } else {
+        lv_label_set_text_fmt(label_time, "[TIME]#11cc55 %02d:%02d:%02d", hour, minute, second);
       }
-
-      char timeStr[42];
-      sprintf(timeStr,
-              "[TIME]#11cc55 %c%c:%c%c:%c%c %s#",
-              hoursChar[0],
-              hoursChar[1],
-              minutesChar[0],
-              minutesChar[1],
-              secondsChar[0],
-              secondsChar[1],
-              ampmChar);
-
-      lv_label_set_text(label_time, timeStr);
     }
 
     if ((year != currentYear) || (month != currentMonth) || (dayOfWeek != currentDayOfWeek) || (day != currentDay)) {
-
-      char dateStr[38];
-      sprintf(dateStr, "[DATE]#007fff %04d.%02d.%02d#", short(year), char(month), char(day));
-      lv_label_set_text(label_date, dateStr);
+      lv_label_set_text_fmt(label_date, "[DATE]#007fff %04d.%02d.%02d#", short(year), char(month), char(day));
 
       currentYear = year;
       currentMonth = month;
@@ -233,20 +190,16 @@ WatchFaceTerminal::~WatchFaceTerminal() {
   heartbeat = heartRateController.HeartRate();
   heartbeatRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
   if (heartbeat.IsUpdated() || heartbeatRunning.IsUpdated()) {
-    char heartbeatBuffer[28];
-    if (heartbeatRunning.Get())
-      sprintf(heartbeatBuffer, "[L_HR]#ee3311 %d bpm#", heartbeat.Get());
-    else
-      sprintf(heartbeatBuffer, "[L_HR]#ee3311 ---#");
-
-    lv_label_set_text(heartbeatValue, heartbeatBuffer);
+    if (heartbeatRunning.Get()) {
+      lv_label_set_text_fmt(heartbeatValue, "[L_HR]#ee3311 %d bpm#", heartbeat.Get());
+    } else {
+      lv_label_set_text_static(heartbeatValue, "[L_HR]#ee3311 ---#");
+    }
   }
 
   stepCount = motionController.NbSteps();
   motionSensorOk = motionController.IsSensorOk();
-  char stepString[34];
   if (stepCount.IsUpdated() || motionSensorOk.IsUpdated()) {
-    sprintf(stepString, "[STEP]#ee3377 %lu steps#", stepCount.Get());
-    lv_label_set_text(stepValue, stepString);
+    lv_label_set_text_fmt(stepValue, "[STEP]#ee3377 %lu steps#", stepCount.Get());
   }
 }
