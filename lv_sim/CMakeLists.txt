@@ -178,6 +178,8 @@ target_sources(pinesim PUBLIC
   ../src/displayapp/screens/WatchFaceDigital.cpp
   ../src/displayapp/screens/WatchFaceAnalog.h
   ../src/displayapp/screens/WatchFaceAnalog.cpp
+  ../src/displayapp/screens/WatchFaceTerminal.h
+  ../src/displayapp/screens/WatchFaceTerminal.cpp
   ../src/displayapp/icons/bg_clock.c # used by WatchFaceAnalog.cpp
   ../src/displayapp/screens/Music.h
   ../src/displayapp/screens/Music.cpp
