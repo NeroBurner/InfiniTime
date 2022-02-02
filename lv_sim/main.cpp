@@ -423,6 +423,7 @@ public:
       debounce('c', 'C', state[SDL_SCANCODE_C], key_handled_c);
       debounce('l', 'L', state[SDL_SCANCODE_L], key_handled_l);
       debounce('p', 'P', state[SDL_SCANCODE_P], key_handled_p);
+      debounce('s', 'S', state[SDL_SCANCODE_S], key_handled_s);
       // screen switcher buttons
       debounce('1', '!'+1, state[SDL_SCANCODE_1], key_handled_1);
       debounce('2', '!'+2, state[SDL_SCANCODE_2], key_handled_2);
@@ -479,6 +480,14 @@ public:
         this->print_memory_usage = true;
       } else if (key == 'P') {
         this->print_memory_usage = false;
+      } else if (key == 's') {
+        motionSensor.steps += 500;
+      } else if (key == 'S') {
+        if (motionSensor.steps > 500) {
+          motionSensor.steps -= 500;
+        } else {
+          motionSensor.steps = 0;
+        }
       } else if (key >= '0' && key <= '9') {
         this->switch_to_screen(key-'0');
       } else if (key >= '!'+0 && key <= '!'+9) {
@@ -616,6 +625,7 @@ private:
     bool key_handled_c = false; // c ... charging, C ... not charging
     bool key_handled_l = false; // l ... increase brightness level, L ... lower brightness level
     bool key_handled_p = false; // p ... enable print memory usage, P ... disable print memory usage
+    bool key_handled_s = false; // s ... increase step count, S ... decrease step count
     // numbers from 0 to 9 to switch between screens
     bool key_handled_1 = false;
     bool key_handled_2 = false;
