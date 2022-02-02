@@ -424,6 +424,7 @@ public:
       debounce('l', 'L', state[SDL_SCANCODE_L], key_handled_l);
       debounce('p', 'P', state[SDL_SCANCODE_P], key_handled_p);
       debounce('s', 'S', state[SDL_SCANCODE_S], key_handled_s);
+      debounce('h', 'H', state[SDL_SCANCODE_H], key_handled_h);
       // screen switcher buttons
       debounce('1', '!'+1, state[SDL_SCANCODE_1], key_handled_1);
       debounce('2', '!'+2, state[SDL_SCANCODE_2], key_handled_2);
@@ -488,6 +489,17 @@ public:
         } else {
           motionSensor.steps = 0;
         }
+      } else if (key == 'h') {
+        if (heartRateController.State() == Pinetime::Controllers::HeartRateController::States::Stopped) {
+          heartRateController.Start();
+        } else if (heartRateController.State() == Pinetime::Controllers::HeartRateController::States::NotEnoughData) {
+          heartRateController.Update(Pinetime::Controllers::HeartRateController::States::Running, 10);
+        } else {
+          uint8_t heartrate = heartRateController.HeartRate();
+          heartRateController.Update(Pinetime::Controllers::HeartRateController::States::Running, heartrate + 10);
+        }
+      } else if (key == 'H') {
+        heartRateController.Stop();
       } else if (key >= '0' && key <= '9') {
         this->switch_to_screen(key-'0');
       } else if (key >= '!'+0 && key <= '!'+9) {
@@ -626,6 +638,7 @@ private:
     bool key_handled_l = false; // l ... increase brightness level, L ... lower brightness level
     bool key_handled_p = false; // p ... enable print memory usage, P ... disable print memory usage
     bool key_handled_s = false; // s ... increase step count, S ... decrease step count
+    bool key_handled_h = false; // h ... set heartrate running, H ... stop heartrate
     // numbers from 0 to 9 to switch between screens
     bool key_handled_1 = false;
     bool key_handled_2 = false;
