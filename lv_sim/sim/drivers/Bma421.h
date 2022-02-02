@@ -39,13 +39,16 @@ namespace Pinetime {
       bool IsOk() const;
       DeviceTypes DeviceType() const;
 
+      // lv_sim: returned by Process(), public to be modified by main.cpp
+      uint32_t steps = 0;
+
     private:
       void Reset();
 
       TwiMaster& twiMaster;
       uint8_t deviceAddress = 0x18;
       bma4_dev bma;
-      bool isOk = false;
+      bool isOk = true;
       bool isResetOk = false;
       DeviceTypes deviceType = DeviceTypes::Unknown;
     };

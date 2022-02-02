@@ -99,10 +99,10 @@ Bma421::Values Bma421::Process() {
 //  struct bma4_accel data;
 //  bma4_read_accel_xyz(&data, &bma);
 //
-  uint32_t steps = 0;
+//  uint32_t steps = 0;
 //  bma423_step_counter_output(&steps, &bma);
 //
-  int32_t temperature = 0;
+//  int32_t temperature = 0;
 //  bma4_get_temperature(&temperature, BMA4_DEG, &bma);
 //  temperature = temperature / 1000;
 //
@@ -119,6 +119,7 @@ bool Bma421::IsOk() const {
 
 void Bma421::ResetStepCounter() {
 //  bma423_reset_step_counter(&bma);
+  steps = 0;
 }
 
 void Bma421::SoftReset() {
