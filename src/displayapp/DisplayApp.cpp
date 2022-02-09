@@ -99,8 +99,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
                        Pinetime::Controllers::TimerController& timerController,
                        Pinetime::Controllers::AlarmController& alarmController,
                        Pinetime::Controllers::BrightnessController& brightnessController,
-                       Pinetime::Controllers::TouchHandler& touchHandler,
-                       Pinetime::Controllers::WeatherService& weatherService)
+                       Pinetime::Controllers::TouchHandler& touchHandler)
   : lcd {lcd},
     lvgl {lvgl},
     touchPanel {touchPanel},
@@ -116,8 +115,7 @@ DisplayApp::DisplayApp(Drivers::St7789& lcd,
     timerController {timerController},
     alarmController {alarmController},
     brightnessController {brightnessController},
-    touchHandler {touchHandler},
-    weatherService {weatherService} {
+    touchHandler {touchHandler} {
 }
 
 void DisplayApp::Start(System::BootErrors error) {
@@ -349,7 +347,7 @@ void DisplayApp::LoadApp(Apps app, DisplayApp::FullRefreshDirections direction) 
                                                        settingsController,
                                                        heartRateController,
                                                        motionController,
-                                                       weatherService);
+                                                       systemTask->nimble().weather());
       break;
 
     case Apps::Error:
