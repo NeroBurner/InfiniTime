@@ -40,6 +40,8 @@ target_sources(pinesim PUBLIC
   sim/components/ble/NavigationService.cpp
   sim/components/ble/NimbleController.h
   sim/components/ble/NimbleController.cpp
+  sim/components/ble/weather/WeatherService.h
+  sim/components/ble/weather/WeatherService.cpp
   sim/components/brightness/BrightnessController.h
   sim/components/brightness/BrightnessController.cpp
   sim/components/firmwarevalidator/FirmwareValidator.h
@@ -113,11 +115,13 @@ target_sources(pinesim PUBLIC
   ../src/displayapp/fonts/lv_font_navi_80.c
 
   ../src/displayapp/fonts/jetbrains_mono_extrabold_compressed.c
+  ../src/displayapp/fonts/jetbrains_mono_bold_16.c
   ../src/displayapp/fonts/jetbrains_mono_bold_20.c
   ../src/displayapp/fonts/jetbrains_mono_76.c
   ../src/displayapp/fonts/jetbrains_mono_42.c
   ../src/displayapp/fonts/lv_font_sys_48.c
   ../src/displayapp/fonts/open_sans_light.c
+  ../src/displayapp/fonts/fontawesome_weathericons.c
 )
 
 target_include_directories(pinesim PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -229,6 +233,8 @@ target_sources(pinesim PUBLIC
   ../src/displayapp/screens/settings/SettingWakeUp.h
   ../src/displayapp/screens/settings/SettingWatchFace.cpp
   ../src/displayapp/screens/settings/SettingWatchFace.h
+  ../src/displayapp/screens/Weather.h
+  ../src/displayapp/screens/Weather.cpp
   ../src/buttonhandler/ButtonHandler.h
   ../src/buttonhandler/ButtonHandler.cpp
   ../src/components/alarm/AlarmController.h
