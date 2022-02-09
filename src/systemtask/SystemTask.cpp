@@ -1,13 +1,4 @@
 #include "systemtask/SystemTask.h"
-#define min // workaround: nimble's min/max macros conflict with libstdc++
-#define max
-#include <host/ble_gap.h>
-#include <host/ble_gatt.h>
-#include <host/ble_hs_adv.h>
-#include <host/util/util.h>
-#include <nimble/hci_common.h>
-#undef max
-#undef min
 #include <hal/nrf_rtc.h>
 #include <libraries/gpiote/app_gpiote.h>
 #include <libraries/log/nrf_log.h>
@@ -197,13 +188,13 @@ void SystemTask::Work() {
   // Touchscreen
   nrf_gpio_cfg_sense_input(PinMap::Cst816sIrq,
                            static_cast<nrf_gpio_pin_pull_t>(GPIO_PIN_CNF_PULL_Pullup),
-                           static_cast<nrf_gpio_pin_sense_t> GPIO_PIN_CNF_SENSE_Low);
+                           static_cast<nrf_gpio_pin_sense_t>(GPIO_PIN_CNF_SENSE_Low));
 
   pinConfig.skip_gpio_setup = true;
   pinConfig.hi_accuracy = false;
   pinConfig.is_watcher = false;
   pinConfig.sense = static_cast<nrf_gpiote_polarity_t>(NRF_GPIOTE_POLARITY_HITOLO);
-  pinConfig.pull = static_cast<nrf_gpio_pin_pull_t> GPIO_PIN_CNF_PULL_Pullup;
+  pinConfig.pull = static_cast<nrf_gpio_pin_pull_t>(GPIO_PIN_CNF_PULL_Pullup);
 
   nrfx_gpiote_in_init(PinMap::Cst816sIrq, &pinConfig, nrfx_gpiote_evt_handler);
 
@@ -239,6 +230,7 @@ void SystemTask::Work() {
           if (!bleController.IsFirmwareUpdating()) {
             doNotGoToSleep = false;
           }
+          ReloadIdleTimer();
           break;
         case Messages::DisableSleeping:
           doNotGoToSleep = true;
@@ -295,6 +287,9 @@ void SystemTask::Work() {
         case Messages::OnNewTime:
           ReloadIdleTimer();
           displayApp.PushMessage(Pinetime::Applications::Display::Messages::UpdateDateTime);
+          if (alarmController.State() == Controllers::AlarmController::AlarmState::Set) {
+            alarmController.ScheduleAlarm();
+          }
           break;
         case Messages::OnNewNotification:
           if (settingsController.GetNotificationStatus() == Pinetime::Controllers::Settings::Notification::ON) {
