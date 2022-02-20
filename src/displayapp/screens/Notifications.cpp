@@ -208,6 +208,7 @@ Notifications::NotificationItem::NotificationItem(const char* title,
       *pchar = ' ';
       pchar = strchr(pchar + 1, '\n');
     }
+    lv_label_refr_text(alert_type);
   }
   lv_label_set_long_mode(alert_type, LV_LABEL_LONG_SROLL_CIRC);
   lv_obj_set_width(alert_type, 180);
