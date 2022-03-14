@@ -83,6 +83,12 @@ WatchFaceAnalog::WatchFaceAnalog(Pinetime::Applications::DisplayApp* app,
   lv_label_set_text_fmt(label_date_day, "%s\n%02i", dateTimeController.DayOfWeekShortToString(), dateTimeController.Day());
   lv_label_set_align(label_date_day, LV_LABEL_ALIGN_CENTER);
   lv_obj_align(label_date_day, NULL, LV_ALIGN_CENTER, 50, 0);
+      
+  // digital clock
+  label_digital_clock = lv_label_create(lv_scr_act(), NULL);
+  lv_obj_set_style_local_text_color(label_digital_clock, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, lv_color_hex(0x000080));
+  lv_label_set_align(label_date_day, LV_LABEL_ALIGN_CENTER);
+  lv_obj_align(label_date_day, NULL, LV_ALIGN_CENTER, 0, -50);
 
   minute_body = lv_line_create(lv_scr_act(), NULL);
   minute_body_trace = lv_line_create(lv_scr_act(), NULL);
@@ -175,6 +181,8 @@ void WatchFaceAnalog::UpdateClock() {
     second_point[0] = CoordinateRelocate(-20, angle);
     second_point[1] = CoordinateRelocate(SecondLength, angle);
     lv_line_set_points(second_body, second_point, 2);
+    
+    lv_label_set_text_fmt(label_digital_clock, "%02d:%02d:%02d", hour, minute, second);
   }
 }
 
